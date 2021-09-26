@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import javax.ws.rs.DELETE;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -12,6 +13,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Response;
 
 import com.google.gson.Gson;
+import java.time.LocalTime;
 
 @Path("/items")
 public class ListItemsService {
@@ -43,8 +45,27 @@ public class ListItemsService {
     
     @POST
     public Response postListItem(@FormParam("newEntry") String entry) {
-        list.add(0, entry);
+    	if (entry.isBlank()) 
+    		return Response.status(400).build();
+    	String now = LocalTime.now().toString();
+    	String newItem = entry + ", " + now;
+    	list.add(0, newItem);
         
         return Response.ok().build();
+    }
+    
+    @DELETE
+    public Response deleteList()
+    {
+    	list.clear();
+    	return Response.ok().build();
+    }
+    @DELETE
+    @Path("{id: [0-9]+}")
+    public Response deleteItem(@PathParam("id") String id)
+    {
+    	int i = Integer.parseInt(id);
+    	list.remove(i);
+    	return Response.ok().build();
     }
 }

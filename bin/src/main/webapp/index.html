@@ -3,19 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <title>Dynamic Todo List</title>
-<style>
-.del {background-color: #F00;}
-</style>
 <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
 <script type="text/javascript">
 
 function updateList(items) {
-	let i = 0;
-	
     $("#my-list").html("");
     items.forEach(function (e) {
-    	$("#my-list").append("<li>" + e + "<button class='del' id=" + i + ">Delete</button>" + "</li>");
-        i++;
+        $("#my-list").append("<li>" + e + "</li>");
     });
 }
 
@@ -28,44 +22,21 @@ function getListItems() {
         }
     });
 }
-function deleteList() {
-    $.ajax({
-        url : 'services/items',
-        type : 'DELETE',
-        success : function(r) {
-            updateList(r);
-        }
-    });
-}
+
 function sendListItem() {
     var listItem = $("#texttosend").val();
+    
     $.post("services/items", { newEntry: listItem}, function() {
         getListItems();
     });
-    $("#texttosend").val("");
 }
-function deleteItem(id) {
-	$.ajax({
-		url : "services/items/" + id,
-		type : 'DELETE',
-		success : function(r) {
-			getListItems(r);
-		}
-	});
-}
+
 $(document).ready(function () { 
     getListItems();
-    $("#my-list").on('click', ".del", function() {
-    	let i = $(this).attr("id");
-    	deleteItem(i);
-    });
+    
     $("#send-item").on('click', function () {
         sendListItem();
     });
-    $("#delete-list").on('click', function() {
-    	deleteList();
-    });
-    
 });
 
 </script>
@@ -79,16 +50,22 @@ The changes must be implemented both on the front-end and on the server.
 </p>
 
 <ul style="font-style: italic">
+<li>Add a button that clears the entire list</li>
 <li>Add a convenient way for the user to delete individual entries (for example, individual buttons or links alongside each entry)</li>
+<li>Add a time stamp that shows when a task was created</li>
+<li>Check and validate input using a reasonable regular expression, don't allow tasks with no content</li>
 </ul>
+
 
 Enter your task: <input type="text" id="texttosend"><br>
 <button id="send-item" type="button" >Submit</button>
-<button id="delete-list" type="button">Clear</button>
+
 <ul id="my-list"></ul>
+
 
 <p>
 <a href="services/items">Link to List Items API</a>
 </p>
+
 </body>
 </html>
